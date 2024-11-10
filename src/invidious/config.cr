@@ -13,6 +13,7 @@ struct ConfigPreferences
 
   property annotations : Bool = false
   property annotations_subscribed : Bool = false
+  property preload : Bool = true
   property autoplay : Bool = false
   property captions : Array(String) = ["", "", ""]
   property comments : Array(String) = ["youtube", ""]
@@ -54,6 +55,15 @@ struct ConfigPreferences
   end
 end
 
+struct HTTPProxyConfig
+  include YAML::Serializable
+
+  property user : String
+  property password : String
+  property host : String
+  property port : Int32
+end
+
 class Config
   include YAML::Serializable
 
@@ -68,14 +78,14 @@ class Config
   property output : String = "STDOUT"
   # Default log level, valid YAML values are ints and strings, see src/invidious/helpers/logger.cr
   property log_level : LogLevel = LogLevel::Info
+  # Enables colors in logs. Useful for debugging purposes
+  property colorize_logs : Bool = false
   # Database configuration with separate parameters (username, hostname, etc)
   property db : DBConfig? = nil
 
   # Database configuration using 12-Factor "Database URL" syntax
   @[YAML::Field(converter: Preferences::URIConverter)]
   property database_url : URI = URI.parse("")
-  # Use polling to keep decryption function up to date
-  property decrypt_polling : Bool = false
   # Used for crawling channels: threads should check all videos uploaded by a channel
   property full_refresh : Bool = false
 
@@ -120,15 +130,26 @@ class Config
   # Connect to YouTube over 'ipv6', 'ipv4'. Will sometimes resolve fix issues with rate-limiting (see https://github.com/ytdl-org/youtube-dl/issues/21729)
   @[YAML::Field(converter: Preferences::FamilyConverter)]
   property force_resolve : Socket::Family = Socket::Family::UNSPEC
+
+  # External signature solver server socket (either a path to a UNIX domain socket or "<IP>:<Port>")
+  property signature_server : String? = nil
+
   # Port to listen for connections (overridden by command line argument)
   property port : Int32 = 3000
   # Host to bind (overridden by command line argument)
   property host_binding : String = "0.0.0.0"
   # Pool size for HTTP requests to youtube.com and ytimg.com (each domain has a separate pool of `pool_size`)
   property pool_size : Int32 = 100
+  # HTTP Proxy configuration
+  property http_proxy : HTTPProxyConfig? = nil
 
   # Use Innertube's transcripts API instead of timedtext for closed captions
   property use_innertube_for_captions : Bool = false
+
+  # visitor data ID for Google session
+  property visitor_data : String? = nil
+  # poToken for passing bot attestation
+  property po_token : String? = nil
 
   # Saved cookies in "name1=value1; name2=value2..." format
   @[YAML::Field(converter: Preferences::StringToCookies)]

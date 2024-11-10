@@ -1,6 +1,6 @@
 #########################################
 #
-#  Database configuration
+#  Database and other external servers
 #
 #########################################
 
@@ -40,6 +40,19 @@ db:
 ##
 #check_tables: false
 
+
+##
+## Path to an external signature resolver, used to emulate
+## the Youtube client's Javascript. If no such server is
+## available, some videos will not be playable.
+##
+## When this setting is commented out, no external
+## resolver will be used.
+##
+## Accepted values: a path to a UNIX socket or "<IP>:<Port>"
+## Default: <none>
+##
+#signature_server:
 
 
 #########################################
@@ -160,6 +173,17 @@ https_only: false
 ##
 #force_resolve:
 
+##
+## Configuration for using a HTTP proxy
+##
+## If unset, then no HTTP proxy will be used.
+## 
+http_proxy:
+  user:
+  password:
+  host:
+  port:
+
 
 ##
 ## Use Innertube's transcripts API instead of timedtext for closed captions
@@ -173,6 +197,18 @@ https_only: false
 ##
 # use_innertube_for_captions: false
 
+##
+## Send Google session informations. This is useful when Invidious is blocked
+## by the message "This helps protect our community."
+## See https://github.com/iv-org/invidious/issues/4734.
+##
+## Warning: These strings gives much more identifiable information to Google!
+##
+## Accepted values: String
+## Default: <none>
+##
+# po_token: ""
+# visitor_data: ""
 
 # -----------------------------
 #  Logging
@@ -197,6 +233,17 @@ https_only: false
 ##
 #log_level: Info
 
+##
+## Enables colors in logs. Useful for debugging purposes
+## This is overridden if "-k" or "--colorize"
+## are passed on the command line.
+## Colors are also disabled if the environment variable
+## NO_COLOR is present and has any value
+##
+## Accepted values: true, false
+## Default: true
+##
+#colorize_logs: false
 
 # -----------------------------
 #  Features
@@ -342,21 +389,6 @@ full_refresh: false
 ## Default: 1
 ##
 feed_threads: 1
-
-##
-## Enable/Disable the polling job that keeps the decryption
-## function (for "secured" videos) up to date.
-##
-## Note: This part of the code generate a small amount of data every minute.
-## This may not be desired if you have bandwidth limits set by your ISP.
-##
-## Note 2: This part of the code is currently broken, so changing
-## this setting has no impact.
-##
-## Accepted values: true, false
-## Default: false
-##
-#decrypt_polling: false
 
 
 jobs:
@@ -696,6 +728,22 @@ default_user_preferences:
   # -----------------------------
   #  Video player behavior
   # -----------------------------
+
+  ##
+  ## This option controls the value of the HTML5 <video> element's
+  ## "preload" attribute.
+  ##
+  ## If set to 'false', no video data will be loaded until the user
+  ## explicitly starts the video by clicking the "Play" button.
+  ## If set to 'true', the web browser will buffer some video data
+  ## while the page is loading.
+  ##
+  ## See: https://www.w3schools.com/tags/att_video_preload.asp
+  ##
+  ## Accepted values: true, false
+  ## Default: true
+  ##
+  #preload: true
 
   ##
   ## Automatically play videos on page load.

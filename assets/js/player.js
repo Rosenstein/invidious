@@ -3,7 +3,6 @@ var player_data = JSON.parse(document.getElementById('player_data').textContent)
 var video_data = JSON.parse(document.getElementById('video_data').textContent);
 
 var options = {
-    preload: 'auto',
     liveui: true,
     playbackRates: [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0],
     controlBar: {
@@ -351,7 +350,12 @@ if (video_data.params.save_player_pos) {
     const rememberedTime = get_video_time();
     let lastUpdated = 0;
 
-    if(!hasTimeParam) set_seconds_after_start(rememberedTime);
+    if(!hasTimeParam) {
+      if (rememberedTime >= video_data.length_seconds - 20)
+        set_seconds_after_start(0);
+      else
+        set_seconds_after_start(rememberedTime);
+    }
 
     player.on('timeupdate', function () {
         const raw = player.currentTime();
